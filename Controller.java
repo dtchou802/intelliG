@@ -23,7 +23,7 @@ public class Controller extends Application {
 
 	static ArrayList<Integer> current = new ArrayList<>();
 	static ArrayList<Integer> desired = new ArrayList<>();
-	static IntegerProperty test = new SimpleIntegerProperty(123);
+	static IntegerProperty test = new SimpleIntegerProperty(75);
 
 
 	static SensorModule simulator = new SensorModule();
@@ -83,7 +83,7 @@ public class Controller extends Application {
 		display.setLbl_desiredPH(desired.get(3));
 		display.setLbl_desiredCO2(desired.get(4));
 
-		hardware.checkAir(current.get(0), desired.get(0));
+		hardware.checkAir(test.getValue(), desired.get(0));
 		hardware.checkHumidity(current.get(1), desired.get(1));
 		hardware.checkMoisture(current.get(2), desired.get(2));
 		hardware.checkCO2(current.get(4), desired.get(4));
@@ -102,7 +102,8 @@ public class Controller extends Application {
 							public void handle(ActionEvent actionEvent)
 							{
 								if(hardware.isAirOn()) {
-									test.set(test.getValue() + 1);//I think you should have used an Integer here.
+									test.set(test.getValue() - 1);//I think you should have used an Integer here.
+									hardware.checkAir(test.getValue(),desired.get(0));
 								}
 							}
 						}
