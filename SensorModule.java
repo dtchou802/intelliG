@@ -83,7 +83,7 @@ public class SensorModule {
 	 * start at 0, we add 4. Then our upper bound is 8 - 4 = 4.
 	 */
 	public int generatePH() {
-		pH = random.nextInt(4) + 4;
+		pH = 7;
 		return pH;
 	}
 
