@@ -26,7 +26,7 @@ public class Controller extends Application {
 	static IntegerProperty temp = new SimpleIntegerProperty(75);
 	static IntegerProperty humid = new SimpleIntegerProperty(45);
 	static IntegerProperty moist = new SimpleIntegerProperty(70);
-	static IntegerProperty co2 = new SimpleIntegerProperty(1480);
+	static IntegerProperty co2 = new SimpleIntegerProperty(1324);
 
 
 	static SensorModule simulator = new SensorModule();
@@ -118,17 +118,14 @@ public class Controller extends Application {
 								if(hardware.isHumidifierOn()) {
 									humid.set(humid.getValue() + 1);//I think you should have used an Integer here.
 									hardware.checkHumidity(humid.getValue(),desired.get(1));
-//									private boolean lightsOn;
-//									private boolean ventOn;
-//									private boolean CO2releaseOn;
 								}
 								if(hardware.isIrrigationOn()) {
 									moist.set(moist.getValue() + 1);//I think you should have used an Integer here.
 									hardware.checkMoisture(moist.getValue(),desired.get(2));
 								}
 								if(hardware.isCO2releaseOn()) {
-									co2.set(co2.getValue() + 1);//I think you should have used an Integer here.
-									hardware.checkMoisture(co2.getValue(),desired.get(4));
+									co2.set(co2.getValue() + 35);//I think you should have used an Integer here.
+									hardware.checkCO2(co2.getValue(),desired.get(4));
 								}
 							}
 						}
