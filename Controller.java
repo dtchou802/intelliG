@@ -2,24 +2,39 @@ package intelliGreen;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import javafx.animation.*;
+import javafx.util.*;
+import javafx.application.*;
+import javafx.event.*;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.IntegerProperty;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.beans.property.SimpleIntegerProperty;
+
 
 public class Controller extends Application {
+    int[] current2= {60,71,80,90,91};
 
 	static ArrayList<Integer> current = new ArrayList<>();
 	static ArrayList<Integer> desired = new ArrayList<>();
+	static IntegerProperty test = new SimpleIntegerProperty(123);
+
 
 	static SensorModule simulator = new SensorModule();
 	HardwareModule hardware = new HardwareModule();
 	Display display = new Display();
 
+
 	static ZonedDateTime time = ZonedDateTime.now();
 	static int lastSeconds = time.getSecond();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		current.add(0, simulator.generateTemperature());
 		current.add(1, simulator.generateHumidity());
 		current.add(2, simulator.generateMoisture());
@@ -32,12 +47,17 @@ public class Controller extends Application {
 		desired.add(2, 80);
 		desired.add(3, 7);
 		desired.add(4, 1500);
-		Application.launch(args);
+		Controller.launch(args);
+
+
+
+
+
 	}
 
-	public void start(Stage primaryStage) {
+	@Override
+	public void start(Stage primaryStage) throws InterruptedException {
 		// TODO: at startup ask for desired values, save them to 'desired' ArrayList
-
 		primaryStage.setTitle("IntelliGarden");
 		Scene mainScene = new Scene(display, 1000, 500);
 		primaryStage.setScene(mainScene);
@@ -49,12 +69,14 @@ public class Controller extends Application {
 		current.set(3, simulator.generatePH());
 		current.set(4, simulator.generateCO2());
 
-		display.setLbl_temperature(current.get(0));
+
+		display.setLbl_temperature(test.get());
+		display.lbl_temperature.textProperty().bind(Bindings.concat("Temperature: ", test.asString()));
 		display.setLbl_humidity(current.get(1));
 		display.setLbl_moisture(current.get(2));
 		display.setLbl_PH(current.get(3));
 		display.setLbl_CO2(current.get(4));
-		
+
 		display.setLbl_desiredTemp(desired.get(0));
 		display.setLbl_desiredHumid(desired.get(1));
 		display.setLbl_desiredMoisture(desired.get(2));
@@ -72,16 +94,24 @@ public class Controller extends Application {
 		display.setLbl_CO2release("CO2 release: " + ((hardware.isCO2releaseOn() == true) ? "ON" : "OFF"));
 		display.setLbl_Ventilator("Ventilator: " + ((hardware.isVentOn() == true) ? "ON" : "OFF"));
 
-		// TODO: find a way to track elapsed time
 
-		// if (time.getSecond() - lastSeconds > 10) {
-		//
-		// display.setLbl_time("Current Time: " + formatTime());
-		//
-		// lastSeconds = time.getSecond();
-		// }
+		Timeline timeline = new Timeline(
+				new KeyFrame(Duration.seconds(0),
+						new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent actionEvent)
+							{
+								if(hardware.isAirOn()) {
+									test.set(test.getValue() + 1);//I think you should have used an Integer here.
+								}
+							}
+						}
+				),
+				new KeyFrame(Duration.seconds(1))//Do something every second. In this case we are going to increment setStrP.
+		);
+		timeline.setCycleCount(1000);//Repeat this 10 times
+		timeline.play();
 
-		// TODO: add button for changing desired values and presets
 	}
 
 	private static String formatTime() {

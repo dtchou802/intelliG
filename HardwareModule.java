@@ -13,6 +13,7 @@ public class HardwareModule {
 	private ArrayList<Integer> current = new ArrayList<>();
 	private ArrayList<Integer> desired = new ArrayList<>();
 
+
 	private boolean airOn;
 	private boolean humidifierOn;
 	private boolean lightsOn;
