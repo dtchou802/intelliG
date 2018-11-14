@@ -2,31 +2,37 @@ package intelliGreen;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import javafx.animation.*;
-import javafx.util.*;
-import javafx.application.*;
-import javafx.event.*;
 
+import eu.hansolo.colors.MaterialDesign;
+import eu.hansolo.medusa.Gauge;
+import eu.hansolo.medusa.GaugeBuilder;
+import javafx.animation.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.util.*;
+import javafx.event.*;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.property.IntegerProperty;
-
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.beans.property.SimpleIntegerProperty;
 
 
 public class Controller extends Application {
-    int[] current2= {60,71,80,90,91};
 
 	static ArrayList<Integer> current = new ArrayList<>();
 	static ArrayList<Integer> desired = new ArrayList<>();
-	static IntegerProperty temp = new SimpleIntegerProperty(75);
+	static DoubleProperty temp = new SimpleDoubleProperty(90);
 	static IntegerProperty humid = new SimpleIntegerProperty(45);
-	static IntegerProperty moist = new SimpleIntegerProperty(70);
-	static IntegerProperty co2 = new SimpleIntegerProperty(1324);
+	static IntegerProperty moist = new SimpleIntegerProperty(50);
+	static IntegerProperty co2 = new SimpleIntegerProperty(1124);
 
 
 	static SensorModule simulator = new SensorModule();
@@ -47,13 +53,10 @@ public class Controller extends Application {
 		// TODO: Collect these at the beginning with display
 		desired.add(0, 70);
 		desired.add(1, 50);
-		desired.add(2, 80);
+		desired.add(2, 65);
 		desired.add(3, 7);
 		desired.add(4, 1500);
 		Controller.launch(args);
-
-
-
 
 
 	}
@@ -66,20 +69,22 @@ public class Controller extends Application {
 		primaryStage.setScene(mainScene);
 		primaryStage.show();
 
-		current.set(0, simulator.generateTemperature());
-		current.set(1, simulator.generateHumidity());
-		current.set(2, simulator.generateMoisture());
-		current.set(3, simulator.generatePH());
-		current.set(4, simulator.generateCO2());
+//		temp.setValue( simulator.generateTemperature());
+//		humid.setValue( simulator.generateHumidity());
+//		moist.setValue( simulator.generateMoisture());
+//		current.set(3, simulator.generatePH());
+//		co2.set(simulator.generateCO2());
+
+		display.tempG.valueProperty().bind(temp);
+		display.humidG.valueProperty().bind(humid);
+		display.moistG.valueProperty().bind(moist);
+		display.co2G.valueProperty().bind(co2);
 
 
-		display.setLbl_temperature(temp.get());
-		display.lbl_temperature.textProperty().bind(Bindings.concat("Temperature: ", temp.asString()));
 		display.setLbl_humidity(humid.get());
 		display.lbl_humidity.textProperty().bind(Bindings.concat("Humidity: ", humid.asString(),"%"));
 		display.setLbl_moisture(moist.get());
 		display.lbl_moisture.textProperty().bind(Bindings.concat("Moisture: ", moist.asString(),"%"));
-
 		display.setLbl_PH(current.get(3));
 
 		display.setLbl_CO2(co2.get());
@@ -93,15 +98,15 @@ public class Controller extends Application {
 		display.setLbl_desiredCO2(desired.get(4));
 
 
-		hardware.checkAir(temp.getValue(), desired.get(0));
+		hardware.checkAir(temp.getValue().intValue(), desired.get(0));
 		hardware.checkHumidity(humid.get(), desired.get(1));
 		hardware.checkMoisture(moist.get(), desired.get(2));
 		hardware.checkCO2(co2.get(), desired.get(4));
 
-		display.setLbl_AirCond("A/C: " + hardware.getCond());
-		display.setLbl_Humidifier("Humidifier: " + ((hardware.isHumidifierOn() == true) ? "ON" : "OFF"));
+//		display.setLbl_AirCond("A/C: " + hardware.getCond());
+//		display.setLbl_Humidifier("Humidifier: " + ((hardware.isHumidifierOn() == true) ? "ON" : "OFF"));
 		display.setLbl_Irrigation("Irrigation: " + ((hardware.isIrrigationOn() == true) ? "ON" : "OFF"));
-		display.setLbl_CO2release("CO2 release: " + ((hardware.isCO2releaseOn() == true) ? "ON" : "OFF"));
+//		display.setLbl_CO2release("CO2 release: " + ((hardware.isCO2releaseOn() == true) ? "ON" : "OFF"));
 		display.setLbl_Ventilator("Ventilator: " + ((hardware.isVentOn() == true) ? "ON" : "OFF"));
 
 
@@ -111,21 +116,30 @@ public class Controller extends Application {
 							@Override
 							public void handle(ActionEvent actionEvent)
 							{
+
 								if(hardware.isAirOn()) {
-									temp.set(temp.getValue() - 1);//I think you should have used an Integer here.
-									hardware.checkAir(temp.getValue(),desired.get(0));
+									temp.set(temp.getValue() - 1.5);//I think you should have used an Integer here.
+									hardware.checkAir(temp.getValue().intValue(),desired.get(0));
+									display.setLbl_AirCond("A/C: " + hardware.getCond());
+
 								}
 								if(hardware.isHumidifierOn()) {
 									humid.set(humid.getValue() + 1);//I think you should have used an Integer here.
 									hardware.checkHumidity(humid.getValue(),desired.get(1));
+									display.setLbl_Humidifier("Humidifier: " + ((hardware.isHumidifierOn() == true) ? "ON" : "OFF"));
+
 								}
 								if(hardware.isIrrigationOn()) {
 									moist.set(moist.getValue() + 1);//I think you should have used an Integer here.
 									hardware.checkMoisture(moist.getValue(),desired.get(2));
+									display.setLbl_Irrigation("Irrigation: " + ((hardware.isIrrigationOn() == true) ? "ON" : "OFF"));
+
 								}
 								if(hardware.isCO2releaseOn()) {
 									co2.set(co2.getValue() + 35);//I think you should have used an Integer here.
 									hardware.checkCO2(co2.getValue(),desired.get(4));
+									display.setLbl_CO2release("CO2 release: " + ((hardware.isCO2releaseOn() == true) ? "ON" : "OFF"));
+
 								}
 							}
 						}
