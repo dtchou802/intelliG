@@ -1,2 +1,5 @@
 # CS3337
-please do not copy
+Automate the systems in the operation of a green
+
+Using JavaFX for UI and java backend
+Used medusa gauge library for improve UI
