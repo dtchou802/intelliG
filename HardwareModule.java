@@ -1,4 +1,4 @@
-package intelliGreen;
+package intelliG;
 
 import java.util.ArrayList;
 
