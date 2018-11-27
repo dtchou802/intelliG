@@ -1,4 +1,4 @@
-package intelliGreen;
+package intelliG;
 
 
 import eu.hansolo.colors.MaterialDesign;
