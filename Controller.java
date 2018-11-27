@@ -29,6 +29,11 @@ public class Controller extends Application {
 
 	static ArrayList<Integer> current = new ArrayList<>();
 	static ArrayList<Integer> desired = new ArrayList<>();
+	static IntegerProperty dhumid = new SimpleIntegerProperty(50);
+	static IntegerProperty dtemp = new SimpleIntegerProperty(75);
+	static IntegerProperty dmoist = new SimpleIntegerProperty(55);
+	static IntegerProperty dco2 = new SimpleIntegerProperty(1300);
+
 	static DoubleProperty temp = new SimpleDoubleProperty(90);
 	static IntegerProperty humid = new SimpleIntegerProperty(45);
 	static IntegerProperty moist = new SimpleIntegerProperty(50);
@@ -91,17 +96,17 @@ public class Controller extends Application {
 		display.lbl_CO2.textProperty().bind(Bindings.concat("CO2: ", co2.asString(),"PPM"));
 
 
-		display.setLbl_desiredTemp(desired.get(0));
-		display.setLbl_desiredHumid(desired.get(1));
-		display.setLbl_desiredMoisture(desired.get(2));
-		display.setLbl_desiredPH(desired.get(3));
-		display.setLbl_desiredCO2(desired.get(4));
+		display.setLbl_desiredTemp(dtemp.getValue());
+		display.setLbl_desiredHumid(dhumid.getValue());
+		display.setLbl_desiredMoisture(dmoist.getValue());
+		display.setLbl_desiredPH(7);
+		display.setLbl_desiredCO2(dco2.getValue());
 
 
-		hardware.checkAir(temp.getValue().intValue(), desired.get(0));
-		hardware.checkHumidity(humid.get(), desired.get(1));
-		hardware.checkMoisture(moist.get(), desired.get(2));
-		hardware.checkCO2(co2.get(), desired.get(4));
+		hardware.checkAir(temp.getValue().intValue(), dtemp.getValue());
+		hardware.checkHumidity(humid.get(), dhumid.getValue());
+		hardware.checkMoisture(moist.get(), dmoist.getValue());
+		hardware.checkCO2(co2.get(), dco2.getValue());
 
 //		display.setLbl_AirCond("A/C: " + hardware.getCond());
 //		display.setLbl_Humidifier("Humidifier: " + ((hardware.isHumidifierOn() == true) ? "ON" : "OFF"));
@@ -119,25 +124,25 @@ public class Controller extends Application {
 
 								if(hardware.isAirOn()) {
 									temp.set(temp.getValue() - 1.5);//I think you should have used an Integer here.
-									hardware.checkAir(temp.getValue().intValue(),desired.get(0));
+									hardware.checkAir(temp.getValue().intValue(),dtemp.getValue());
 									display.setLbl_AirCond("A/C: " + hardware.getCond());
 
 								}
 								if(hardware.isHumidifierOn()) {
 									humid.set(humid.getValue() + 1);//I think you should have used an Integer here.
-									hardware.checkHumidity(humid.getValue(),desired.get(1));
+									hardware.checkHumidity(humid.getValue(),dhumid.getValue());
 									display.setLbl_Humidifier("Humidifier: " + ((hardware.isHumidifierOn() == true) ? "ON" : "OFF"));
 
 								}
 								if(hardware.isIrrigationOn()) {
 									moist.set(moist.getValue() + 1);//I think you should have used an Integer here.
-									hardware.checkMoisture(moist.getValue(),desired.get(2));
+									hardware.checkMoisture(moist.getValue(),dmoist.getValue());
 									display.setLbl_Irrigation("Irrigation: " + ((hardware.isIrrigationOn() == true) ? "ON" : "OFF"));
 
 								}
 								if(hardware.isCO2releaseOn()) {
 									co2.set(co2.getValue() + 35);//I think you should have used an Integer here.
-									hardware.checkCO2(co2.getValue(),desired.get(4));
+									hardware.checkCO2(co2.getValue(),dco2.getValue());
 									display.setLbl_CO2release("CO2 release: " + ((hardware.isCO2releaseOn() == true) ? "ON" : "OFF"));
 
 								}
