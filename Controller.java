@@ -1,4 +1,4 @@
-package intelliGreen;
+package intelliG;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
